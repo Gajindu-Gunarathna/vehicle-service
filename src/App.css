@@ -1,7 +1,20 @@
 .App {
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: #0D1B2A; /* dark blue */
 }
 
+/* You can delete this if unused */
+.App-header {
+  background-color: #0D1B2A;
+  min-height: 100vh;
+  display: block;
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+
+/* Keep rest if you're using logo/spinner later */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -11,17 +24,6 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
