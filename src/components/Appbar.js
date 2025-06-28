@@ -15,16 +15,31 @@ import {
   Paper,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { loginUser } from "./api"; // ✅ API function for login
 
 export default function Appbar() {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState(0); // 0 for Login, 1 for Signup
+  const [tab, setTab] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setEmail("");
+    setPassword("");
+  };
 
-  const handleTabChange = (event, newValue) => {
-    setTab(newValue);
+  const handleTabChange = (event, newValue) => setTab(newValue);
+
+  const handleLogin = async () => {
+    const result = await loginUser({ email, password });
+    if (result === true) {
+      alert("Login successful!");
+      handleClose();
+    } else {
+      alert("Login failed. Check email or password.");
+    }
   };
 
   return (
@@ -38,32 +53,19 @@ export default function Appbar() {
         }}
       >
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            sx={{
-              mr: 2,
-              "&:hover": {
-                color: "#1B98E0",
-              },
-            }}
-          >
+          <IconButton size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
             <MenuIcon />
           </IconButton>
 
           <Typography
             variant="h6"
-            component="div"
             sx={{
               flexGrow: 1,
               fontWeight: "bold",
               letterSpacing: 1,
               cursor: "pointer",
               color: "#E0E1DD",
-              "&:hover": {
-                color: "#1B98E0",
-              },
+              "&:hover": { color: "#1B98E0" },
             }}
             onClick={() => window.location.reload()}
           >
@@ -77,7 +79,6 @@ export default function Appbar() {
               px: 3,
               py: 1,
               borderRadius: "4px",
-              transition: "0.3s",
               "&:hover": {
                 backgroundColor: "#1B98E0",
                 color: "#ffffff",
@@ -90,7 +91,6 @@ export default function Appbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Login/Signup Modal */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -109,7 +109,7 @@ export default function Appbar() {
               left: "50%",
               transform: "translate(-50%, -50%)",
               width: 400,
-              bgcolor: "#0A1626", // Darker, richer navy (not black)
+              bgcolor: "#0A1626",
               color: "#F5F7FA",
               boxShadow:
                 "0 0 18px 5px rgba(27, 152, 224, 0.7), 0 6px 24px rgba(0,0,0,0.8)",
@@ -118,13 +118,10 @@ export default function Appbar() {
               outline: "none",
             }}
           >
-            {/* Tabs for Login & Signup */}
             <Tabs
               value={tab}
               onChange={handleTabChange}
               variant="fullWidth"
-              textColor="primary"
-              indicatorColor="primary"
               sx={{ mb: 3 }}
             >
               <Tab
@@ -149,7 +146,8 @@ export default function Appbar() {
                 <TextField
                   fullWidth
                   label="Email"
-                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   margin="normal"
                   variant="filled"
                   InputProps={{
@@ -165,6 +163,8 @@ export default function Appbar() {
                   fullWidth
                   label="Password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   margin="normal"
                   variant="filled"
                   InputProps={{
@@ -186,73 +186,18 @@ export default function Appbar() {
                     "&:hover": { bgcolor: "#1177BB" },
                     fontWeight: "bold",
                   }}
+                  onClick={handleLogin}
                 >
                   Login
                 </Button>
               </Box>
             )}
 
-            {/* Signup Form */}
+            {/* Signup Placeholder */}
             {tab === 1 && (
-              <Box component="form" noValidate autoComplete="off">
-                <TextField
-                  fullWidth
-                  label="Username"
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    sx: {
-                      bgcolor: "#0D1B2A",
-                      borderRadius: 1,
-                      color: "#F5F7FA",
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "#A3BFFA" } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Email"
-                  type="email"
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    sx: {
-                      bgcolor: "#0D1B2A",
-                      borderRadius: 1,
-                      color: "#F5F7FA",
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "#A3BFFA" } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    sx: {
-                      bgcolor: "#0D1B2A",
-                      borderRadius: 1,
-                      color: "#F5F7FA",
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "#A3BFFA" } }}
-                />
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    mt: 3,
-                    borderRadius: 2,
-                    bgcolor: "#1B98E0",
-                    "&:hover": { bgcolor: "#1177BB" },
-                    fontWeight: "bold",
-                  }}
-                >
-                  Signup
-                </Button>
-              </Box>
+              <Typography variant="body2" sx={{ textAlign: "center", mt: 4 }}>
+                Signup form coming soon...
+              </Typography>
             )}
           </Paper>
         </Fade>
