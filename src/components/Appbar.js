@@ -9,38 +9,28 @@ import {
   Modal,
   Fade,
   Backdrop,
-  TextField,
   Tabs,
   Tab,
   Paper,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { loginUser } from "./api"; // ✅ API function for login
+import  Login from "./Login"; // impporting the logging component
 
 export default function Appbar() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+ /* const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");  */
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setEmail("");
-    setPassword("");
+    //setEmail("");
+    //setPassword("");
+    setTab(0);
   };
 
   const handleTabChange = (event, newValue) => setTab(newValue);
-
-  const handleLogin = async () => {
-    const result = await loginUser({ email, password });
-    if (result === true) {
-      alert("Login successful!");
-      handleClose();
-    } else {
-      alert("Login failed. Check email or password.");
-    }
-  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -140,58 +130,7 @@ export default function Appbar() {
               />
             </Tabs>
 
-            {/* Login Form */}
-            {tab === 0 && (
-              <Box component="form" noValidate autoComplete="off">
-                <TextField
-                  fullWidth
-                  label="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    sx: {
-                      bgcolor: "#0D1B2A",
-                      borderRadius: 1,
-                      color: "#F5F7FA",
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "#A3BFFA" } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    sx: {
-                      bgcolor: "#0D1B2A",
-                      borderRadius: 1,
-                      color: "#F5F7FA",
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "#A3BFFA" } }}
-                />
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    mt: 3,
-                    borderRadius: 2,
-                    bgcolor: "#1B98E0",
-                    "&:hover": { bgcolor: "#1177BB" },
-                    fontWeight: "bold",
-                  }}
-                  onClick={handleLogin}
-                >
-                  Login
-                </Button>
-              </Box>
-            )}
+            {tab === 0 && <Login onSuccess={handleClose} />}
 
             {/* Signup Placeholder */}
             {tab === 1 && (

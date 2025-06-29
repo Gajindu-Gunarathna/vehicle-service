@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8084/user-app/users";
+const BASE_URL = "http://localhost:8084/service-app/users";
 
 export async function loginUser(credentials) {
   const res = await fetch(`${BASE_URL}/login`, {
