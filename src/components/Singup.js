@@ -79,7 +79,24 @@ function Singup({onSuccess }){
               }}
               InputLabelProps={{ sx: { color: "#A3BFFA" } }}
             />
-    
+
+            <TextField
+                fullWidth
+                label="Contact"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                margin="normal"
+                variant="filled"
+                InputProps={{
+                sx: {
+                  bgcolor: "#0D1B2A",
+                  borderRadius: 1,
+                  color: "#F5F7FA",
+                },
+              }}
+              InputLabelProps={{ sx: { color: "#A3BFFA" } }}
+            />
+                
             <Button
               variant="contained"
               fullWidth
