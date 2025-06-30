@@ -1,29 +1,29 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Snackbar, Alert } from "@mui/material";
-import { signupUser } from "./api";//Need to create this 
+import { signupUser } from "./api"; //Need to create this
 
-function Singup({onSuccess }){
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [contact,setContact] = useState("");
+function Singup({ onSuccess }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [contact, setContact] = useState("");
 
-    const [error, setError] = useState("");         
-    const [openSnack, setOpenSnack] = useState(false);
+  const [error, setError] = useState("");
+  const [openSnack, setOpenSnack] = useState(false);
 
-    const handleSubmit = async (e) =>{
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        const success = await signupUser ({ name, email, password, contact});
+    const success = await signupUser({ name, email, password, contact });
 
-        if(success){
-            setError("");
-            setOpenSnack(true);
-            onSuccess();
-        }else{
-            setError("Signup failed !!!. Try again. ");
-        }
-    };
+    if (success) {
+      setError("");
+      setOpenSnack(true);
+      onSuccess();
+    } else {
+      setError("Signup failed !!!. Try again. ");
+    }
+  };
 
     return (
         <>
@@ -80,7 +80,7 @@ function Singup({onSuccess }){
               InputLabelProps={{ sx: { color: "#A3BFFA" } }}
             />
 
-            <TextField
+<TextField
                 fullWidth
                 label="Contact"
                 value={contact}
@@ -97,6 +97,7 @@ function Singup({onSuccess }){
               InputLabelProps={{ sx: { color: "#A3BFFA" } }}
             />
                 
+    
             <Button
               variant="contained"
               fullWidth
