@@ -28,6 +28,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Login from "./Login";
+import Singup from "./Singup";
 
 export default function Appbar() {
   const [open, setOpen] = useState(false);
@@ -323,12 +324,7 @@ export default function Appbar() {
 
             {tab === 0 && <Login onSuccess={handleClose} />}
 
-            {/* Signup Placeholder */}
-            {tab === 1 && (
-              <Typography variant="body2" sx={{ textAlign: "center", mt: 4 }}>
-                Signup form coming soon...
-              </Typography>
-            )}
+            {tab === 1 && <Singup onSuccess={handleClose} />}
           </Paper>
         </Fade>
       </Modal>

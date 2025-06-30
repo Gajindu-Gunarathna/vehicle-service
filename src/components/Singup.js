@@ -139,4 +139,4 @@ function Singup({ onSuccess }) {
       );
 }
 
-export default Signup;
+export default Singup;

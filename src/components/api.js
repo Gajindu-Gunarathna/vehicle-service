@@ -13,20 +13,22 @@ export async function signupUser(credentials){
   try{
     const res = await fetch("http://localhost:8084/service-app/users/signup",  {
       method: "POST",
-      header: { "Content-Type": "application/json",},
+      headers: { "Content-Type": "application/json",},
       body: JSON.stringify(credentials),
     });
 
+    const data = await res.json();
+
     //when signup is a succes
     if(res.ok){
-      console.log ("Singup Responded:", await res.json());
+      console.log ("Singup Responded:", data );
       return true;
     }else{
       console.error("SignUp Failed:", res.status);
     }
 
   }catch(error){
-    console.error("Sing error:", error);
+    console.error("Sign error!!!!:", error);
     return false;
   }
 }
