@@ -19,6 +19,7 @@ import {
   Divider,
   ListItemIcon,
 } from "@mui/material";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import EventNoteIcon from "@mui/icons-material/EventNote";
@@ -27,22 +28,22 @@ import BuildIcon from "@mui/icons-material/Build";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import LogoutIcon from "@mui/icons-material/Logout";
+
 import Login from "./Login";
 import Singup from "./Singup";
+import { useNavigate } from "react-router-dom";
 
 export default function Appbar() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [role, setRole] = useState(null);
-  const [email, setEmail] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
-    const storedEmail = localStorage.getItem("email");
     if (storedRole) setRole(storedRole);
-    if (storedEmail) setEmail(storedEmail);
   }, []);
 
   const handleOpen = () => setOpen(true);
@@ -50,34 +51,21 @@ export default function Appbar() {
     setOpen(false);
     setTab(0);
   };
-  const handleTabChange = (event, newValue) => setTab(newValue);
-
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setDrawerOpen(open);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("email");
     setRole(null);
-    setEmail(null);
     setDrawerOpen(false);
     window.location.reload();
   };
-
-  const userName = email ? email.split("@")[0] : "";
 
   const userMenuItems = [
     { label: "User Profile", icon: <PersonIcon />, path: "/profile" },
     { label: "Appointments", icon: <EventNoteIcon />, path: "/appointments" },
     { label: "Products", icon: <StorefrontIcon />, path: "/products" },
   ];
+
   const adminMenuItems = [
     ...userMenuItems,
     { label: "Mechanics", icon: <BuildIcon />, path: "/mechanics" },
@@ -88,6 +76,7 @@ export default function Appbar() {
       path: "/service-centers",
     },
   ];
+
   const menuItems = role === "admin" ? adminMenuItems : userMenuItems;
 
   const list = () => (
@@ -108,7 +97,6 @@ export default function Appbar() {
       onKeyDown={toggleDrawer(false)}
     >
       <Box>
-        {/* Menu Title */}
         <Typography
           variant="h5"
           sx={{
@@ -123,30 +111,15 @@ export default function Appbar() {
           Menu
         </Typography>
 
-        {/* Greeting */}
-        {userName && (
-          <Typography
-            variant="h6"
-            sx={{
-              color: "#B0CFFF",
-              px: 2,
-              fontWeight: "bold",
-              letterSpacing: 1,
-              borderBottom: "1px solid #1B98E0",
-              mb: 2,
-              py: 1,
-            }}
-          >
-            👋 Hello, {userName}
-          </Typography>
-        )}
-
         <List>
           {menuItems.map((item, index) => (
             <React.Fragment key={item.label}>
               <ListItem
                 button
-                onClick={() => alert(`Go to ${item.label} page (add routing)`)}
+                onClick={() => {
+                  navigate(item.path);
+                  setDrawerOpen(false);
+                }}
                 sx={{
                   color: "#F5F7FA",
                   py: 2,
@@ -164,7 +137,6 @@ export default function Appbar() {
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
               </ListItem>
-              {/* Divider and spacing between menu items */}
               {index !== menuItems.length - 1 && (
                 <Divider sx={{ borderColor: "#1B98E0", mx: 4, mb: 2 }} />
               )}
@@ -197,6 +169,15 @@ export default function Appbar() {
     </Box>
   );
 
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    )
+      return;
+    setDrawerOpen(open);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -214,7 +195,7 @@ export default function Appbar() {
             color="inherit"
             sx={{ mr: 2 }}
             onClick={() => {
-              if (role) setDrawerOpen(true); // only open if logged in
+              if (role) setDrawerOpen(true);
             }}
           >
             <MenuIcon />
@@ -230,7 +211,7 @@ export default function Appbar() {
               color: "#E0E1DD",
               "&:hover": { color: "#1B98E0" },
             }}
-            onClick={() => window.location.reload()}
+            onClick={() => navigate("/")}
           >
             AutoFix
           </Typography>
@@ -302,28 +283,14 @@ export default function Appbar() {
           >
             <Tabs
               value={tab}
-              onChange={handleTabChange}
+              onChange={(e, newVal) => setTab(newVal)}
               variant="fullWidth"
               sx={{ mb: 3 }}
             >
-              <Tab
-                label="Login"
-                sx={{
-                  color: "#B0CFFF",
-                  "&.Mui-selected": { color: "#1B98E0", fontWeight: "bold" },
-                }}
-              />
-              <Tab
-                label="Signup"
-                sx={{
-                  color: "#B0CFFF",
-                  "&.Mui-selected": { color: "#1B98E0", fontWeight: "bold" },
-                }}
-              />
+              <Tab label="Login" />
+              <Tab label="Signup" />
             </Tabs>
-
             {tab === 0 && <Login onSuccess={handleClose} />}
-
             {tab === 1 && <Singup onSuccess={handleClose} />}
           </Paper>
         </Fade>
