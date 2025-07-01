@@ -286,7 +286,20 @@ export default function Appbar() {
               value={tab}
               onChange={(e, newVal) => setTab(newVal)}
               variant="fullWidth"
-              sx={{ mb: 3 }}
+              TabIndicatorProps={{
+                style: { backgroundColor: "#ffffff" }, // White underline
+              }}
+              sx={{
+                mb: 3,
+                '& .MuiTab-root': {
+                  color: '#ffffff',          // White text for all tabs
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                },
+                '& .Mui-selected': {
+                  color: '#ffffff',          // Ensure selected tab also stays white
+                },
+              }}
             >
               <Tab label="Login" />
               <Tab label="Signup" />
