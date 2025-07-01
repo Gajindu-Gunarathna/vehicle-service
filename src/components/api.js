@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/service-app/users";
+const BASE_URL = "http://localhost:8084/service-app/users";
 
 export async function loginUser(credentials) {
   const res = await fetch(`${BASE_URL}/login`, {
@@ -25,6 +25,7 @@ export async function signupUser(credentials){
       return true;
     }else{
       console.error("SignUp Failed:", res.status);
+      return false;
     }
 
   }catch(error){
