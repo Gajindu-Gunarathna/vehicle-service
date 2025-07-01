@@ -48,3 +48,21 @@ export async function signupUser(credentials) {
     };
   }
 }
+
+// Fetch user by email
+export async function getUserByEmail(email) {
+  const res = await fetch(`${BASE_URL}/email/${email}`); // backend endpoint to get user by email
+  if (!res.ok) throw new Error("Failed to fetch user");
+  return res.json();
+}
+
+// Update user
+export async function updateUser(user) {
+  const res = await fetch(`${BASE_URL}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) throw new Error("Failed to update user");
+  return res.json();
+}

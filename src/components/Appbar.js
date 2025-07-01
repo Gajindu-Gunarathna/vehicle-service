@@ -57,7 +57,8 @@ export default function Appbar() {
     localStorage.removeItem("email");
     setRole(null);
     setDrawerOpen(false);
-    window.location.reload();
+    navigate("/"); // <-- Redirect to home page after logout
+    // window.location.reload();  // Remove reload to keep SPA behavior smooth
   };
 
   const userMenuItems = [
