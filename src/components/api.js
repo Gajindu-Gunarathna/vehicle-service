@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8084/service-app/users";
+const BASE_URL = "http://localhost:8080/service-app/users";
 
 // 🔐 Login Function
 export async function loginUser(credentials) {
