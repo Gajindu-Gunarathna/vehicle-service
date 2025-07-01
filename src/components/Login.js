@@ -12,6 +12,12 @@ function Login({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ Check if fields are empty
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
     const success = await loginUser({ email, password });
 
     if (success) {
@@ -19,11 +25,14 @@ function Login({ onSuccess }) {
       setOpenSnack(true);
       console.log("Success");
 
+      // 🎩 Role check
       if (email === "admin@gmail.com" && password === "admin123") {
         localStorage.setItem("role", "admin");
       } else {
         localStorage.setItem("role", "user");
       }
+
+      localStorage.setItem("email", email); // 📨 Store email for greeting
 
       setTimeout(() => {
         onSuccess(); // close modal
@@ -93,6 +102,7 @@ function Login({ onSuccess }) {
           Login
         </Button>
 
+        {/* ❌ Error Message */}
         {error && (
           <p style={{ color: "red", marginTop: "10px", textAlign: "center" }}>
             {error}
@@ -100,7 +110,7 @@ function Login({ onSuccess }) {
         )}
       </Box>
 
-      {/* Snackbar Notification */}
+      {/* ✅ Snackbar Notification */}
       <Snackbar
         open={openSnack}
         autoHideDuration={3000}

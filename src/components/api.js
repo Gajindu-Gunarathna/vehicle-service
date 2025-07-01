@@ -1,35 +1,50 @@
 const BASE_URL = "http://localhost:8084/service-app/users";
 
+// 🔐 Login Function
 export async function loginUser(credentials) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
-  return res.json(); // returns true or false
+
+  const data = await res.json();
+  return data; // returns backend response with message
 }
 
-export async function signupUser(credentials){
-  try{
-    const res = await fetch("http://localhost:8084/service-app/users/signup",  {
+// 📝 Signup Function
+export async function signupUser(credentials) {
+  const { name, email, password, contact } = credentials;
+
+  // 🚫 Check if any field is empty
+  if (!name || !email || !password || !contact) {
+    return { success: false, message: "All fields are required!" };
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/signup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json",},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
 
-    const data = await res.json();
+    const data = await res.json(); // 🎯 Catch message from backend
 
-    //when signup is a succes
-    if(res.ok){
-      console.log ("Singup Responded:", data );
-      return true;
-    }else{
-      console.error("SignUp Failed:", res.status);
-      return false;
+    // ✅ Signup successful
+    if (res.ok) {
+      return { success: true, message: data.message || "Signup successful!" };
+    } else {
+      // ❗ Backend sent an error like "Email already exists"
+      return {
+        success: false,
+        message: data.message || "Signup failed. Please try again.",
+      };
     }
-
-  }catch(error){
-    console.error("Sign error!!!!:", error);
-    return false;
+  } catch (error) {
+    // 🔌 Connection or fetch error
+    return {
+      success: false,
+      message: "Something went wrong. Please check your internet connection.",
+    };
   }
 }
