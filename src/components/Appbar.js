@@ -65,10 +65,17 @@ export default function Appbar() {
     { label: "User Profile", icon: <PersonIcon />, path: "/profile" },
     { label: "Appointments", icon: <EventNoteIcon />, path: "/appointments" },
     { label: "Products", icon: <StorefrontIcon />, path: "/products" },
+    { label: "Services", icon: <SettingsIcon />, path: "/services" },
+    {
+      label: "Service Centers",
+      icon: <LocationCityIcon />,
+      path: "/service-centers",
+    },
   ];
 
   const adminMenuItems = [
-    ...userMenuItems,
+    { label: "Appointments", icon: <EventNoteIcon />, path: "/appointments" },
+    { label: "Products", icon: <StorefrontIcon />, path: "/products" },
     { label: "Mechanics", icon: <BuildIcon />, path: "/mechanics" },
     { label: "Services", icon: <SettingsIcon />, path: "/services" },
     {
@@ -291,13 +298,13 @@ export default function Appbar() {
               }}
               sx={{
                 mb: 3,
-                '& .MuiTab-root': {
-                  color: '#ffffff',          // White text for all tabs
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
+                "& .MuiTab-root": {
+                  color: "#ffffff", // White text for all tabs
+                  fontWeight: "bold",
+                  fontSize: "1rem",
                 },
-                '& .Mui-selected': {
-                  color: '#ffffff',          // Ensure selected tab also stays white
+                "& .Mui-selected": {
+                  color: "#ffffff", // Ensure selected tab also stays white
                 },
               }}
             >
