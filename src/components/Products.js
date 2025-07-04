@@ -122,9 +122,13 @@ export default function Products() {
     }
     setLoading(true);
     try {
-      const imageUrl =
-        (await uploadImage(currentProduct.imageFile)) ||
-        currentProduct.imageUrl;
+      let imageUrl = currentProduct.imageUrl;
+      if (currentProduct.imageFile) {
+        imageUrl = await uploadImage(currentProduct.imageFile);
+      }
+      if (!imageUrl) {
+        imageUrl = "/uploads/NoImageAvailable.jpg"; // 📷 Default fallback image path
+      }
 
       const payload = {
         id: currentProduct.id,
@@ -201,6 +205,14 @@ export default function Products() {
       result += ch;
     }
     return result;
+  };
+
+  const getImageUrl = (p) => {
+    if (!p.imageUrl)
+      return "http://localhost:8083/vehicle-service/uploads/NoImageAvailable.jpg";
+    return p.imageUrl.startsWith("http")
+      ? p.imageUrl
+      : `http://localhost:8083/vehicle-service${p.imageUrl}`;
   };
 
   return (
@@ -306,10 +318,12 @@ export default function Products() {
 
             <CardMedia
               component="img"
-              image={
-                p.imageUrl ||
-                "https://via.placeholder.com/120x120?text=No+Image"
-              }
+              image={`${getImageUrl(p)}?t=${Date.now()}`} // cache bust to force reload
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src =
+                  "http://localhost:8083/vehicle-service/uploads/NoImageAvailable.jpg";
+              }}
               alt={p.name}
               sx={{ width: 120, height: 120, objectFit: "cover", m: 1 }}
             />

@@ -1,5 +1,6 @@
 const USER_BASE_URL = "http://localhost:8080/service-app/users";
 const PRODUCT_BASE_URL = "http://localhost:8083/vehicle-service/products";
+const SERVICE_BASE_URL = "http://localhost:8081/service-app/vehicleservices";
 
 // 🔐 Login Function
 export async function loginUser(credentials) {
@@ -118,5 +119,60 @@ export async function deleteProduct(id) {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete product");
+  return true;
+}
+
+// --------------- Service APIs ------------------
+
+// Fetch all services
+export async function fetchServices() {
+  const res = await fetch(SERVICE_BASE_URL);
+  if (!res.ok) throw new Error("Failed to fetch services");
+  return res.json();
+}
+
+// Upload service image, returns image URL
+export async function uploadServiceImage(file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append("image", file); // backend expects "image" param
+
+  const res = await fetch(`${SERVICE_BASE_URL}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) throw new Error("Service image upload failed");
+  const data = await res.text(); // returns string URL
+  return data;
+}
+
+// Create new service
+export async function createService(service) {
+  const res = await fetch(SERVICE_BASE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(service),
+  });
+  if (!res.ok) throw new Error("Failed to create service");
+  return res.json();
+}
+
+// Update existing service
+export async function updateService(service) {
+  const res = await fetch(SERVICE_BASE_URL, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(service),
+  });
+  if (!res.ok) throw new Error("Failed to update service");
+  return res.json();
+}
+
+// Delete service by ID
+export async function deleteService(id) {
+  const res = await fetch(`${SERVICE_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete service");
   return true;
 }
