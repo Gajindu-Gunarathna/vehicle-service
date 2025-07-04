@@ -1,6 +1,7 @@
 const USER_BASE_URL = "http://localhost:8080/service-app/users";
 const PRODUCT_BASE_URL = "http://localhost:8083/vehicle-service/products";
 const SERVICE_BASE_URL = "http://localhost:8081/service-app/vehicleservices";
+const CENTER_BASE_URL = "http://localhost:8081/service-app/centers";
 
 // 🔐 Login Function
 export async function loginUser(credentials) {
@@ -174,5 +175,47 @@ export async function deleteService(id) {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete service");
+  return true;
+}
+
+
+// --------------- Service Center APIs ------------------
+
+
+//Fetching all service cneters
+export async function fetchServiceCenters(){
+  const res = await fetch(CENTER_BASE_URL);
+  if(!res.ok) throw new Error("Failed to fetch Service Center");
+  return res.json();
+}
+
+//Create new Service center
+export async function createServiceCenter(center){
+  const res = await fetch(CENTER_BASE_URL,{
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(center),
+  });
+  if(!res.ok) throw new Error("Failed to create service center");
+  return res.json();
+}
+
+//Updating existing Service ceneter
+export async function updateServiceCenter(center) {
+  const res = await fetch(CENTER_BASE_URL,{
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(center),
+  });
+  if(!res.ok) throw new Error("Failed to update service center");
+  return res.json();
+}
+
+//Deleting existing Service center
+export async function deleteServiceCenter(id) {
+  const res = await fetch(`${CENTER_BASE_URL}/${id}` , {
+    method: "DELETE",
+  });
+  if(!res.ok) throw new Error("Failed to delet service center");
   return true;
 }
