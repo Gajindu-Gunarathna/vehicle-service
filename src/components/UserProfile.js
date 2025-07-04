@@ -122,6 +122,19 @@ export default function UserProfile() {
               bgcolor: "#0D1B2A",
               borderRadius: 1,
               "& .MuiInputLabel-root": { color: "#A3BFFA" },
+              "& .MuiInputBase-input": {
+              color: "#F5F7FA", // Normal text color
+              },
+              "& .Mui-disabled": {
+                color: "#A3BFFA", // Label text color
+                WebkitTextFillColor: "#A3BFFA", // Actual input text color when disabled
+              },  
+
+              "& .MuiFilledInput-input.Mui-disabled": {
+                color: "#F5F7FA !important",
+                WebkitTextFillColor: "#F5F7FA !important",
+              },
+              
             }}
           />
 
@@ -139,6 +152,20 @@ export default function UserProfile() {
               bgcolor: "#0D1B2A",
               borderRadius: 1,
               "& .MuiInputLabel-root": { color: "#A3BFFA" },
+              "& .MuiInputBase-input": {
+              color: "#F5F7FA", // Normal text color
+              },
+              "& .Mui-disabled": {
+                color: "#A3BFFA", // Label text color
+                WebkitTextFillColor: "#A3BFFA", // Actual input text color when disabled
+              },  
+              
+              // Conditionally hide text when editMode is true
+              "& .MuiFilledInput-input.Mui-disabled": {
+                color: editMode ? "transparent" : "#F5F7FA",
+                WebkitTextFillColor: editMode ? "transparent" : "#F5F7FA",
+              },
+              
             }}
           />
 
@@ -156,6 +183,18 @@ export default function UserProfile() {
               bgcolor: "#0D1B2A",
               borderRadius: 1,
               "& .MuiInputLabel-root": { color: "#A3BFFA" },
+              "& .MuiInputBase-input": {
+              color: "#F5F7FA", // Normal text color
+              },
+              "& .Mui-disabled": {
+                color: "#A3BFFA", // Label text color
+                WebkitTextFillColor: "#A3BFFA", // Actual input text color when disabled
+              },  
+              
+              "& .MuiFilledInput-input.Mui-disabled": {
+                color: "#F5F7FA !important",
+                WebkitTextFillColor: "#F5F7FA !important",
+              },
             }}
           />
 
