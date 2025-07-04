@@ -25,14 +25,15 @@ function Login({ onSuccess }) {
       setOpenSnack(true);
       console.log("Success");
 
+      // ✅ Save email
+      localStorage.setItem("email", email);
+
       // 🎩 Role check
       if (email === "admin@gmail.com" && password === "admin123") {
         localStorage.setItem("role", "admin");
       } else {
         localStorage.setItem("role", "user");
       }
-
-      localStorage.setItem("email", email); // 📨 Store email for greeting
 
       setTimeout(() => {
         onSuccess(); // close modal

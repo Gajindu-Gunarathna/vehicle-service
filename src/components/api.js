@@ -16,7 +16,6 @@ export async function loginUser(credentials) {
 export async function signupUser(credentials) {
   const { name, email, password, contact } = credentials;
 
-  // 🚫 Check if any field is empty
   if (!name || !email || !password || !contact) {
     return { success: false, message: "All fields are required!" };
   }
@@ -28,20 +27,17 @@ export async function signupUser(credentials) {
       body: JSON.stringify(credentials),
     });
 
-    const data = await res.json(); // 🎯 Catch message from backend
+    const data = await res.json();
 
-    // ✅ Signup successful
     if (res.ok) {
       return { success: true, message: data.message || "Signup successful!" };
     } else {
-      // ❗ Backend sent an error like "Email already exists"
       return {
         success: false,
         message: data.message || "Signup failed. Please try again.",
       };
     }
   } catch (error) {
-    // 🔌 Connection or fetch error
     return {
       success: false,
       message: "Something went wrong. Please check your internet connection.",
@@ -49,14 +45,14 @@ export async function signupUser(credentials) {
   }
 }
 
-// Fetch user by email
+// 🔍 Fetch user by email
 export async function getUserByEmail(email) {
-  const res = await fetch(`${BASE_URL}/email/${email}`); // backend endpoint to get user by email
+  const res = await fetch(`${BASE_URL}/email/${email}`);
   if (!res.ok) throw new Error("Failed to fetch user");
   return res.json();
 }
 
-// Update user
+// 🔄 Update user
 export async function updateUser(user) {
   const res = await fetch(`${BASE_URL}`, {
     method: "PUT",
