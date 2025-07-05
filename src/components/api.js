@@ -2,6 +2,7 @@ const USER_BASE_URL = "http://localhost:8080/service-app/users";
 const PRODUCT_BASE_URL = "http://localhost:8083/vehicle-service/products";
 const SERVICE_BASE_URL = "http://localhost:8081/service-app/vehicleservices";
 const CENTER_BASE_URL = "http://localhost:8081/service-app/centers";
+const MECHANIC_BASE_URL = "http://localhost:8081/service-app/mechanics";
 
 // 🔐 Login Function
 export async function loginUser(credentials) {
@@ -123,7 +124,7 @@ export async function deleteProduct(id) {
   return true;
 }
 
-// --------------- Service APIs ------------------
+// --------------- Services APIs ------------------
 
 // Fetch all services
 export async function fetchServices() {
@@ -178,44 +179,122 @@ export async function deleteService(id) {
   return true;
 }
 
-
 // --------------- Service Center APIs ------------------
 
-
 //Fetching all service cneters
-export async function fetchServiceCenters(){
+export async function fetchServiceCenters() {
   const res = await fetch(CENTER_BASE_URL);
-  if(!res.ok) throw new Error("Failed to fetch Service Center");
+  if (!res.ok) throw new Error("Failed to fetch Service Center");
   return res.json();
 }
 
 //Create new Service center
-export async function createServiceCenter(center){
-  const res = await fetch(CENTER_BASE_URL,{
+export async function createServiceCenter(center) {
+  const res = await fetch(CENTER_BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(center),
   });
-  if(!res.ok) throw new Error("Failed to create service center");
+  if (!res.ok) throw new Error("Failed to create service center");
   return res.json();
 }
 
-//Updating existing Service ceneter
+//Updating existing Service centers
 export async function updateServiceCenter(center) {
-  const res = await fetch(CENTER_BASE_URL,{
+  const res = await fetch(CENTER_BASE_URL, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(center),
   });
-  if(!res.ok) throw new Error("Failed to update service center");
+  if (!res.ok) throw new Error("Failed to update service center");
   return res.json();
 }
 
 //Deleting existing Service center
 export async function deleteServiceCenter(id) {
-  const res = await fetch(`${CENTER_BASE_URL}/${id}` , {
+  const res = await fetch(`${CENTER_BASE_URL}/${id}`, {
     method: "DELETE",
   });
-  if(!res.ok) throw new Error("Failed to delet service center");
+  if (!res.ok) throw new Error("Failed to delet service center");
+  return true;
+}
+
+// --------------- Mechanics APIs ------------------
+
+// 📦 Fetch all mechanics
+export async function fetchMechanics(availability) {
+  let url = MECHANIC_BASE_URL;
+  if (availability === true) {
+    url += "/available";
+  } else if (availability === false) {
+    url += "/unavailable";
+  }
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch mechanics");
+  return res.json();
+}
+
+// 🔍 Search mechanics by query
+export async function searchMechanics(query, type) {
+  const res = await fetch(
+    `${MECHANIC_BASE_URL}/search?query=${encodeURIComponent(
+      query
+    )}&type=${type}`
+  );
+  if (!res.ok) throw new Error("Failed to search mechanics");
+  return res.json();
+}
+
+// 📂 Fetch only available mechanics
+export async function fetchAvailableMechanics() {
+  const res = await fetch(`${MECHANIC_BASE_URL}/available`);
+  if (!res.ok) throw new Error("Failed to fetch available mechanics");
+  return res.json();
+}
+
+// 📤 Upload mechanic image
+export async function uploadMechanicImage(file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${MECHANIC_BASE_URL}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) throw new Error("Mechanic image upload failed");
+  const data = await res.text();
+  return data;
+}
+
+// ➕ Create mechanic
+export async function createMechanic(mechanic) {
+  const res = await fetch(MECHANIC_BASE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(mechanic),
+  });
+  if (!res.ok) throw new Error("Failed to create mechanic");
+  return res.json();
+}
+
+// 🛠 Update mechanic
+export async function updateMechanic(mechanic) {
+  const res = await fetch(MECHANIC_BASE_URL, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(mechanic),
+  });
+  if (!res.ok) throw new Error("Failed to update mechanic");
+  return res.json();
+}
+
+// ❌ Delete mechanic
+export async function deleteMechanic(id) {
+  const res = await fetch(`${MECHANIC_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete mechanic");
   return true;
 }
