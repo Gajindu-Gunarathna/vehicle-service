@@ -74,15 +74,15 @@ export default function Appbar() {
   ];
 
   const adminMenuItems = [
-    { label: "Appointments", icon: <EventNoteIcon />, path: "/appointments" },
-    { label: "Products", icon: <StorefrontIcon />, path: "/products" },
-    { label: "Mechanics", icon: <BuildIcon />, path: "/mechanics" },
-    { label: "Services", icon: <SettingsIcon />, path: "/services" },
     {
       label: "Service Centers",
       icon: <LocationCityIcon />,
       path: "/service-centers",
     },
+    { label: "Services", icon: <SettingsIcon />, path: "/services" },
+    { label: "Mechanics", icon: <BuildIcon />, path: "/mechanics" },
+    { label: "Appointments", icon: <EventNoteIcon />, path: "/appointments" },
+    { label: "Products", icon: <StorefrontIcon />, path: "/products" },
   ];
 
   const menuItems = role === "admin" ? adminMenuItems : userMenuItems;

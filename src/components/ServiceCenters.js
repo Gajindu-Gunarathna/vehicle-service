@@ -1,226 +1,305 @@
-        import React, { useEffect, useState } from "react";
-        import {
-        Box, Button, Card, Typography, IconButton, Modal,
-        TextField, Snackbar, Alert,
-        } from "@mui/material";
-        import {
-        Add as AddIcon,
-        Edit as EditIcon,
-        Delete as DeleteIcon,
-        Visibility as VisibilityIcon
-        } from "@mui/icons-material";
-        import {
-        fetchServiceCenters,
-        createServiceCenter,
-        updateServiceCenter,
-        deleteServiceCenter,
-        } from "./api"; 
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  Typography,
+  IconButton,
+  Modal,
+  TextField,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Visibility as VisibilityIcon,
+} from "@mui/icons-material";
+import {
+  fetchServiceCenters,
+  createServiceCenter,
+  updateServiceCenter,
+  deleteServiceCenter,
+} from "./api";
 
-        export default function ServiceCenters(){
-            const role = localStorage.getItem("role") || "user";
+export default function ServiceCenters() {
+  const role = localStorage.getItem("role") || "user";
+  const [centers, setCenters] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [centerForm, setCenterForm] = useState({
+    id: null,
+    name: "",
+    address: "",
+    contact: "",
+  });
 
-            // States for service centers, modals, and forms
-            const [centers, setCenters] = useState([]); // All service centers
-            const [modalOpen, setModalOpen] = useState(false); // For add/edit modal
-            const [viewOpen, setViewOpen] = useState(false); // For view modal
-            const [confirmOpen, setConfirmOpen] = useState(false); // For delete confirm
-            const [selected, setSelected] = useState(null); // Center selected to view
-            const [deleteId, setDeleteId] = useState(null); // ID of center to delete
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        setCenters(await fetchServiceCenters());
+      } catch {
+        showSnack("Failed to load service centers", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
-            const [loading, setLoading] = useState(false);
-            
-            // Snackbar for showing feedback messages
-            const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
+  const showSnack = (msg, severity = "success") =>
+    setSnack({ open: true, message: msg, severity });
 
-            // State for the form fields
-            const [centerForm, setCenterForm] = useState({
-                id: null,
-                name: "",
-                address: "",
-                contact: ""
-            });
-            
-            // Load service centers from backend on mount
-            useEffect(() => {
-                const loadCenters = async () => {
-                setLoading(true);
-                try {
-                    const data = await fetchServiceCenters();
-                    setCenters(data);
-                } catch {
-                    showSnack("Failed to load service centers", "error");
-                } finally {
-                    setLoading(false);
-                }
-                };
-                loadCenters();
-            }, []);
+  const handleChange = (e) =>
+    setCenterForm({ ...centerForm, [e.target.name]: e.target.value });
 
+  const handleNew = () => {
+    setCenterForm({ id: null, name: "", address: "", contact: "" });
+    setModalOpen(true);
+  };
 
-            // Show a message to user
-            const showSnack = (message, severity = "success") =>
-                setSnack({ open: true, message, severity });
+  const handleEdit = (center) => {
+    setCenterForm(center);
+    setModalOpen(true);
+  };
 
-            // Handle form input changes
-            const handleChange = (e) => {
-                const { name, value } = e.target;
-                setCenterForm({ ...centerForm, [name]: value });
-            };
+  const handleSave = async () => {
+    const { id, name, address, contact } = centerForm;
+    if (!name.trim() || !address.trim() || !contact.trim())
+      return showSnack("All fields are required", "error");
 
-            const handleNew = () => {
-                setCenterForm({ id: null, name: "", address: "", contact: "" });
-                setModalOpen(true);
-            };
+    setLoading(true);
+    try {
+      if (id) {
+        await updateServiceCenter(centerForm);
+        showSnack("Service Center updated");
+      } else {
+        await createServiceCenter(centerForm);
+        showSnack("Service Center created");
+      }
+      setModalOpen(false);
+      setCenters(await fetchServiceCenters());
+    } catch {
+      showSnack("Error saving service center", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const handleEdit = (center) => {
-                setCenterForm(center);
-                setModalOpen(true);
-            };
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
 
-            const handleSave = async () => {
-                const { id, name, address, contact } = centerForm;
-                if (!name.trim() || !address.trim() || !contact.trim()) {
-                return showSnack("All fields are required", "error");
-                }
-                
-                setLoading(true);
-                try {
-                    if (id) {
-                        await updateServiceCenter(centerForm);
-                        showSnack("Service Center updated");
-                    } else {
-                        await createServiceCenter(centerForm);
-                        showSnack("Service Center created");
-                    }
+  const confirmDelete = async () => {
+    setConfirmOpen(false);
+    if (!deleteId) return;
+    setLoading(true);
+    try {
+      await deleteServiceCenter(deleteId);
+      showSnack("Deleted successfully");
+      setCenters(await fetchServiceCenters());
+    } catch {
+      showSnack("Failed to delete", "error");
+    } finally {
+      setDeleteId(null);
+      setLoading(false);
+    }
+  };
 
-                    setModalOpen(false);
-                    const refreshed = await fetchServiceCenters();
-                    setCenters(refreshed);
-                } catch {
-                    showSnack("Error saving service center", "error");
-                } finally {
-                    setLoading(false);
-                }
-            };
+  const glassStyle = {
+    p: 3,
+    bgcolor: "rgba(255, 255, 255, 0.45)",
+    backdropFilter: "blur(14px)",
+    borderRadius: 3,
+    boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+    color: "#000",
+    border: "1px solid rgba(255, 255, 255, 0.4)",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  };
 
-            // Ask for delete confirmation
-            const handleDelete = (id) => {
-                setDeleteId(id);
-                setConfirmOpen(true);
-            };
+  return (
+    <Box sx={{ p: 3, minHeight: "100vh", bgcolor: "#0F2027" }}>
+      <Typography variant="h5" mb={2} sx={{ color: "#ffffff" }}>
+        Service Centers
+      </Typography>
 
-            // Perform delete after confirmation
-            const confirmDelete = async () => {
-                setConfirmOpen(false);
-                if (!deleteId) return;
-            
-                setLoading(true);
-                try {
-                await deleteServiceCenter(deleteId);
-                showSnack("Deleted successfully");
-                const refreshed = await fetchServiceCenters();
-                setCenters(refreshed);
-                } catch {
-                showSnack("Failed to delete", "error");
-                } finally {
-                setDeleteId(null);
-                setLoading(false);
-                }
-            };
+      {role === "admin" && (
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleNew}>
+          Add Service Center
+        </Button>
+      )}
 
-            return (
-                <Box sx={{  p: 3, minHeight: "100vh", bgcolor: "linear-gradient(to right, #0F2027, #203A43, #2C5364)" }}>
-                <Typography variant="h5" mb={2}>Service Centers</Typography>
-            
-                {role === "admin" && (
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleNew}>
-                    Add Service Center
-                    </Button>
-                )}
-            
-                <Box display="grid" gap={2} mt={2}>
-                    {centers.map((center) => (
-                    <Card key={center.id} sx={{ display: "flex", justifyContent: "space-between", p: 2 }}>
-                        <Box>
-                        <Typography variant="h6">{center.name}</Typography>
-                        <Typography variant="body2">📍 {center.address}</Typography>
-                        <Typography variant="body2">📞 {center.contact}</Typography>
-                        </Box>
-            
-                        <Box>
-                        {role === "admin" ? (
-                            <>
-                            <IconButton onClick={() => handleEdit(center)}><EditIcon /></IconButton>
-                            <IconButton onClick={() => handleDelete(center.id)}><DeleteIcon /></IconButton>
-                            </>
-                        ) : (
-                            <IconButton onClick={() => { setSelected(center); setViewOpen(true); }}>
-                            <VisibilityIcon />
-                            </IconButton>
-                        )}
-                        </Box>
-                    </Card>
-                    ))}
-                </Box>
-            
-                {/* Add/Edit Modal */}
-                <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                    <Box sx={{
-                    p: 3, bgcolor: "#fff", position: "absolute", top: "50%", left: "50%",
-                    transform: "translate(-50%, -50%)", width: 400, borderRadius: 2
-                    }}>
-                    <Typography variant="h6" mb={2}>
-                        {centerForm.id ? "Edit" : "New"} Service Center
-                    </Typography>
-                    <TextField label="Name" name="name" fullWidth value={centerForm.name} onChange={handleChange} margin="normal" />
-                    <TextField label="Address" name="address" fullWidth value={centerForm.address} onChange={handleChange} margin="normal" />
-                    <TextField label="Contact" name="contact" fullWidth value={centerForm.contact} onChange={handleChange} margin="normal" />
-                    <Box mt={2} display="flex" justifyContent="space-between">
-                        <Button onClick={handleSave} variant="contained" disabled={loading}>Save</Button>
-                        <Button onClick={() => setModalOpen(false)} variant="outlined" disabled={loading}>Cancel</Button>
-                    </Box>
-                    </Box>
-                </Modal>
-            
-                {/* View Modal */}
-                <Modal open={viewOpen} onClose={() => setViewOpen(false)}>
-                    <Box sx={{
-                    p: 3, bgcolor: "#fff", position: "absolute", top: "50%", left: "50%",
-                    transform: "translate(-50%, -50%)", width: 400, borderRadius: 2
-                    }}>
-                    <Typography variant="h6">{selected?.name}</Typography>
-                    <Typography>📍 {selected?.address}</Typography>
-                    <Typography>📞 {selected?.contact}</Typography>
-                    <Box mt={2} textAlign="right">
-                        <Button onClick={() => setViewOpen(false)} variant="outlined">Close</Button>
-                    </Box>
-                    </Box>
-                </Modal>
-            
-                {/* Confirm Delete Modal */}
-                <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-                    <Box sx={{
-                    p: 3, bgcolor: "#fff", position: "absolute", top: "50%", left: "50%",
-                    transform: "translate(-50%, -50%)", width: 300, borderRadius: 2, textAlign: "center"
-                    }}>
-                    <Typography>Delete this service center?</Typography>
-                    <Box mt={2} display="flex" justifyContent="space-around">
-                        <Button color="error" variant="contained" onClick={confirmDelete}>Delete</Button>
-                        <Button variant="outlined" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-                    </Box>
-                    </Box>
-                </Modal>
-            
-                <Snackbar
-                    open={snack.open}
-                    autoHideDuration={3000}
-                    onClose={() => setSnack({ ...snack, open: false })}
+      <Box display="grid" gap={2} mt={2}>
+        {centers.map((center) => (
+          <Card
+            key={center.id}
+            sx={{ display: "flex", justifyContent: "space-between", p: 2 }}
+          >
+            <Box>
+              <Typography variant="h6">{center.name}</Typography>
+              <Typography variant="body2">📍 {center.address}</Typography>
+              <Typography variant="body2">📞 {center.contact}</Typography>
+            </Box>
+            <Box>
+              {role === "admin" ? (
+                <>
+                  <IconButton onClick={() => handleEdit(center)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(center.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              ) : (
+                <IconButton
+                  onClick={() => {
+                    setSelected(center);
+                    setViewOpen(true);
+                  }}
                 >
-                    <Alert severity={snack.severity} onClose={() => setSnack({ ...snack, open: false })}>
-                    {snack.message}
-                    </Alert>
-                </Snackbar>
-                </Box>
-            );
-        }
+                  <VisibilityIcon />
+                </IconButton>
+              )}
+            </Box>
+          </Card>
+        ))}
+      </Box>
 
+      {/* Add/Edit Modal */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={{ ...glassStyle, width: 400 }}>
+          <Typography variant="h6" mb={2}>
+            {centerForm.id ? "Edit" : "New"} Service Center
+          </Typography>
+          <TextField
+            label="Name"
+            name="name"
+            fullWidth
+            value={centerForm.name}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            label="Address"
+            name="address"
+            fullWidth
+            value={centerForm.address}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            label="Contact"
+            name="contact"
+            fullWidth
+            value={centerForm.contact}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <Button onClick={handleSave} variant="contained" disabled={loading}>
+              Save
+            </Button>
+            <Button
+              onClick={() => setModalOpen(false)}
+              variant="outlined"
+              sx={{
+                color: "#333",
+                borderColor: "#aaa",
+                "&:hover": {
+                  bgcolor: "#e0e0e0",
+                  borderColor: "#888",
+                },
+              }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* View Modal */}
+      <Modal open={viewOpen} onClose={() => setViewOpen(false)}>
+        <Box sx={{ ...glassStyle, width: 400 }}>
+          <Typography variant="h6">{selected?.name}</Typography>
+          <Typography>📍 {selected?.address}</Typography>
+          <Typography>📞 {selected?.contact}</Typography>
+          <Box mt={2} textAlign="right">
+            <Button
+              onClick={() => setViewOpen(false)}
+              variant="outlined"
+              sx={{
+                color: "#333",
+                borderColor: "#aaa",
+                "&:hover": {
+                  bgcolor: "#e0e0e0",
+                  borderColor: "#888",
+                },
+              }}
+            >
+              Close
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <Box sx={{ ...glassStyle, width: 300, textAlign: "center" }}>
+          <Typography>Delete this service center?</Typography>
+          <Box mt={2} display="flex" justifyContent="space-around">
+            <Button
+              variant="contained"
+              sx={{ bgcolor: "#ff1744", "&:hover": { bgcolor: "#d50000" } }}
+              onClick={confirmDelete}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#333",
+                borderColor: "#aaa",
+                "&:hover": {
+                  bgcolor: "#e0e0e0",
+                  borderColor: "#888",
+                },
+              }}
+              onClick={() => setConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={3000}
+        onClose={() => setSnack({ ...snack, open: false })}
+      >
+        <Alert
+          severity={snack.severity}
+          onClose={() => setSnack({ ...snack, open: false })}
+        >
+          {snack.message}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+}
