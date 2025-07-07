@@ -3,6 +3,8 @@ const PRODUCT_BASE_URL = "http://localhost:8083/vehicle-service/products";
 const SERVICE_BASE_URL = "http://localhost:8081/service-app/vehicleservices";
 const CENTER_BASE_URL = "http://localhost:8081/service-app/centers";
 const MECHANIC_BASE_URL = "http://localhost:8081/service-app/mechanics";
+const APPOINTMENTS_BASE_URL =
+  "http://localhost:8082/appointments-app/appointments";
 
 // 🔐 Login Function
 export async function loginUser(credentials) {
@@ -11,8 +13,16 @@ export async function loginUser(credentials) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    return { success: false, message: errorData.message || "Login failed" };
+  }
+
   const data = await res.json();
-  return data; // returns backend response with message
+
+  // If backend sends token or user data, mark success true here
+  return { success: true, data };
 }
 
 // 📝 Signup Function
@@ -297,4 +307,65 @@ export async function deleteMechanic(id) {
   });
   if (!res.ok) throw new Error("Failed to delete mechanic");
   return true;
+}
+
+// --------------- Appointments APIs ------------------
+
+// 📥 Book a new appointment
+export async function bookAppointment(appointment) {
+  const res = await fetch(APPOINTMENTS_BASE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(appointment),
+  });
+  if (!res.ok) throw new Error("Failed to book appointment");
+  return res.json();
+}
+
+// 🔄 Update existing appointment (by user)
+export async function updateAppointment(id, appointment) {
+  const res = await fetch(`${APPOINTMENTS_BASE_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(appointment),
+  });
+  if (!res.ok) throw new Error("Failed to update appointment");
+  return res.json();
+}
+
+// ❌ Delete appointment (by user)
+export async function deleteAppointment(id) {
+  const res = await fetch(`${APPOINTMENTS_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete appointment");
+  return true;
+}
+
+// 📖 Get all appointments for a user (by userName)
+export async function getAppointmentsByUserName(userName) {
+  const res = await fetch(
+    `${APPOINTMENTS_BASE_URL}/user/${encodeURIComponent(userName)}`
+  );
+  if (!res.ok) throw new Error("Failed to fetch appointments");
+  return res.json();
+}
+
+// 📋 Get all appointments (for admin)
+export async function getAllAppointments() {
+  const res = await fetch(`${APPOINTMENTS_BASE_URL}`);
+  if (!res.ok) throw new Error("Failed to fetch all appointments");
+  return await res.json();
+}
+
+// 🛠 Admin updates appointment status only
+export async function updateAppointmentStatus(id, status) {
+  const res = await fetch(
+    `${APPOINTMENTS_BASE_URL}/status/${id}?status=${status}`,
+    {
+      method: "PUT",
+    }
+  );
+  if (!res.ok) throw new Error("Failed to update appointment status");
+  return res.json();
 }

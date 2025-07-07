@@ -11,37 +11,44 @@ function Login({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // clear error on each try
 
-    // ✅ Check if fields are empty
     if (!email || !password) {
       setError("Please enter both email and password.");
       return;
     }
 
-    const success = await loginUser({ email, password });
+    // ✅ Admin check BEFORE backend call
+    if (email === "admin@gmail.com" && password === "admin123") {
+      localStorage.setItem("email", email);
+      localStorage.setItem("username", email);
+      localStorage.setItem("role", "admin");
 
-    if (success) {
+      setOpenSnack(true);
+      setTimeout(() => {
+        onSuccess();
+        window.location.reload();
+      }, 1500);
+      return; // stop further execution
+    }
+
+    // Normal user login
+    const res = await loginUser({ email, password });
+
+    if (res.success) {
       setError("");
       setOpenSnack(true);
-      console.log("Success");
-
-      // ✅ Save email
       localStorage.setItem("email", email);
-
-      // 🎩 Role check
-      if (email === "admin@gmail.com" && password === "admin123") {
-        localStorage.setItem("role", "admin");
-      } else {
-        localStorage.setItem("role", "user");
-      }
+      localStorage.setItem("username", email);
+      localStorage.setItem("role", "user");
 
       setTimeout(() => {
-        onSuccess(); // close modal
-        window.location.reload(); // reload page immediately after login
+        onSuccess();
+        window.location.reload();
       }, 1500);
     } else {
-      console.log("Login failed");
-      setError("Invalid email or password.");
+      setError(res.message || "Invalid email or password.");
+      setOpenSnack(false);
     }
   };
 
