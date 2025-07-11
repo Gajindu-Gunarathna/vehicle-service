@@ -21,7 +21,7 @@ function Singup({ onSuccess }) {
       setOpenSnack(true);
       onSuccess();
     } else {
-      setError(response.message); // show backend message 🧠
+      setError(response.message); // show backend message 
     }
   };
 

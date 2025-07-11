@@ -6,7 +6,7 @@ const MECHANIC_BASE_URL = "http://localhost:8081/service-app/mechanics";
 const APPOINTMENTS_BASE_URL =
   "http://localhost:8082/appointments-app/appointments";
 
-// 🔐 Login Function
+//  Login Function
 export async function loginUser(credentials) {
   const res = await fetch(`${USER_BASE_URL}/login`, {
     method: "POST",
@@ -25,7 +25,7 @@ export async function loginUser(credentials) {
   return { success: true, data };
 }
 
-// 📝 Signup Function
+//  Signup Function
 export async function signupUser(credentials) {
   const { name, email, password, contact } = credentials;
 
@@ -58,14 +58,14 @@ export async function signupUser(credentials) {
   }
 }
 
-// 🔍 Fetch user by email
+// Fetch user by email
 export async function getUserByEmail(email) {
   const res = await fetch(`${USER_BASE_URL}/email/${email}`);
   if (!res.ok) throw new Error("Failed to fetch user");
   return res.json();
 }
 
-// 🔄 Update user
+// Update user
 export async function updateUser(user) {
   const res = await fetch(`${USER_BASE_URL}`, {
     method: "PUT",
@@ -231,7 +231,7 @@ export async function deleteServiceCenter(id) {
 
 // --------------- Mechanics APIs ------------------
 
-// 📦 Fetch all mechanics
+// Fetch all mechanics
 export async function fetchMechanics(availability) {
   let url = MECHANIC_BASE_URL;
   if (availability === true) {
@@ -245,7 +245,7 @@ export async function fetchMechanics(availability) {
   return res.json();
 }
 
-// 🔍 Search mechanics by query
+// Search mechanics by query
 export async function searchMechanics(query, type) {
   const res = await fetch(
     `${MECHANIC_BASE_URL}/search?query=${encodeURIComponent(
@@ -256,14 +256,14 @@ export async function searchMechanics(query, type) {
   return res.json();
 }
 
-// 📂 Fetch only available mechanics
+// Fetch only available mechanics
 export async function fetchAvailableMechanics() {
   const res = await fetch(`${MECHANIC_BASE_URL}/available`);
   if (!res.ok) throw new Error("Failed to fetch available mechanics");
   return res.json();
 }
 
-// 📤 Upload mechanic image
+// Upload mechanic image
 export async function uploadMechanicImage(file) {
   if (!file) return null;
   const formData = new FormData();
@@ -278,7 +278,7 @@ export async function uploadMechanicImage(file) {
   return data;
 }
 
-// ➕ Create mechanic
+// Create mechanic
 export async function createMechanic(mechanic) {
   const res = await fetch(MECHANIC_BASE_URL, {
     method: "POST",
@@ -289,7 +289,7 @@ export async function createMechanic(mechanic) {
   return res.json();
 }
 
-// 🛠 Update mechanic
+// Update mechanic
 export async function updateMechanic(mechanic) {
   const res = await fetch(MECHANIC_BASE_URL, {
     method: "PUT",
@@ -300,7 +300,7 @@ export async function updateMechanic(mechanic) {
   return res.json();
 }
 
-// ❌ Delete mechanic
+// Delete mechanic
 export async function deleteMechanic(id) {
   const res = await fetch(`${MECHANIC_BASE_URL}/${id}`, {
     method: "DELETE",
@@ -311,7 +311,7 @@ export async function deleteMechanic(id) {
 
 // --------------- Appointments APIs ------------------
 
-// 📥 Book a new appointment
+// Book a new appointment
 export async function bookAppointment(appointment) {
   const res = await fetch(APPOINTMENTS_BASE_URL, {
     method: "POST",
@@ -322,7 +322,7 @@ export async function bookAppointment(appointment) {
   return res.json();
 }
 
-// 🔄 Update existing appointment (by user)
+// Update existing appointment (by user)
 export async function updateAppointment(id, appointment) {
   const res = await fetch(`${APPOINTMENTS_BASE_URL}/${id}`, {
     method: "PUT",
@@ -333,7 +333,7 @@ export async function updateAppointment(id, appointment) {
   return res.json();
 }
 
-// ❌ Delete appointment (by user)
+// Delete appointment (by user)
 export async function deleteAppointment(id) {
   const res = await fetch(`${APPOINTMENTS_BASE_URL}/${id}`, {
     method: "DELETE",
@@ -342,7 +342,7 @@ export async function deleteAppointment(id) {
   return true;
 }
 
-// 📖 Get all appointments for a user (by userName)
+// Get all appointments for a user (by userName)
 export async function getAppointmentsByUserName(userName) {
   const res = await fetch(
     `${APPOINTMENTS_BASE_URL}/user/${encodeURIComponent(userName)}`
@@ -351,14 +351,14 @@ export async function getAppointmentsByUserName(userName) {
   return res.json();
 }
 
-// 📋 Get all appointments (for admin)
+// Get all appointments (for admin)
 export async function getAllAppointments() {
   const res = await fetch(`${APPOINTMENTS_BASE_URL}`);
   if (!res.ok) throw new Error("Failed to fetch all appointments");
   return await res.json();
 }
 
-// 🛠 Admin updates appointment status only
+// Admin updates appointment status only
 export async function updateAppointmentStatus(id, status) {
   const res = await fetch(
     `${APPOINTMENTS_BASE_URL}/status/${id}?status=${status}`,

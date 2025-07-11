@@ -18,7 +18,7 @@ function Login({ onSuccess }) {
       return;
     }
 
-    // ✅ Admin check BEFORE backend call
+    // Admin check BEFORE backend call
     if (email === "admin@gmail.com" && password === "admin123") {
       localStorage.setItem("email", email);
       localStorage.setItem("username", email);

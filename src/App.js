@@ -19,22 +19,22 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* 🌐 Enables page navigation using routes */}
+        {/* Enables page navigation using routes */}
         <Appbar /> {/* 📌 Top navbar stays always visible */}
         <Routes>
-          {/* 🏠 Default home page */}
+          {/* Default home page */}
           <Route path="/" element={<Home />} />
-          {/* 👤 User Profile page (both user/admin can access) */}
+          {/* User Profile page (both user/admin can access) */}
           <Route path="/profile" element={<UserProfile />} />
-          {/* 📅 Appointments page */}
+          {/* Appointments page */}
           <Route path="/appointments" element={<Appointments />} />
-          {/* 🛒 Products page */}
+          {/* Products page */}
           <Route path="/products" element={<Products />} />
-          {/* 🧑‍🔧 Mechanics management (admin only) */}
+          {/* Mechanics management (admin only) */}
           <Route path="/mechanics" element={<Mechanics />} />
-          {/* ⚙️ Services management (admin only) */}
+          {/* Services management (admin only) */}
           <Route path="/services" element={<Services />} />
-          {/* 🏢 Service Centers management (admin only) */}
+          {/* Service Centers management (admin only) */}
           <Route path="/service-centers" element={<ServiceCenters />} />
         </Routes>
       </Router>
